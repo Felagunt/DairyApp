@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.dairyapp'
+    namespace 'com.example.diaryapp'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.dairyapp"
+        applicationId "com.example.diaryapp"
         minSdk 24
         targetSdk 33
         versionCode 1
