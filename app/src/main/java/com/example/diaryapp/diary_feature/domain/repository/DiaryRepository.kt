@@ -6,7 +6,7 @@ interface DiaryRepository {
 
     fun getDiaries(): List<Diary>
 
-    suspend fun getDiaryById(id: String): Diary?
+    suspend fun getDiaryById(id: Int): Diary?
 
     suspend fun insertDiary(diary: Diary)
 

@@ -6,7 +6,7 @@ data class Diary(
     val title: String,
     val content: String,
     val timestamp: String,
-    val diaryId: Int
+    val diaryId: Int? = null
 )
 fun Diary.toDiaryEntity(): DiaryEntity {
     return DiaryEntity(

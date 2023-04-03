@@ -9,7 +9,7 @@ data class DiaryEntity(
     val title: String,
     val content: String,
     val timestamp: String,
-    @PrimaryKey val id: Int
+    @PrimaryKey val id: Int? = null
 )
 
 fun DiaryEntity.toDiary(): Diary {
