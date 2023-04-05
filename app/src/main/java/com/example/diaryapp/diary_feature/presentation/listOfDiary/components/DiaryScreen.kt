@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.diaryapp.diary_feature.presentation.Screen
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiariesEvent
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryViewModel
 import kotlinx.coroutines.coroutineScope
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun DiaryScreen(
+    navController: NavController,
     viewModel: DiaryViewModel = hiltViewModel()
 ) {
 
@@ -35,7 +38,7 @@ fun DiaryScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    //TODO navigate
+                    navController.navigate(Screen.AddEditDiaryScreen.route)
                 },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
@@ -63,7 +66,7 @@ fun DiaryScreen(
                     style = MaterialTheme.typography.h4
                 )
                 IconButton(onClick = {
-                    //TODO navigate
+                    //TODO sorting
                 }
 
                 ) {
@@ -78,14 +81,17 @@ fun DiaryScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                items(state.diaries) {diary ->
+                items(state.diaries) { diary ->
                     DiaryItem(
                         diary = diary,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                //TODO navigation
-                            },
+                            .fillMaxWidth(),
+//                            .clickable {
+//                                onItem
+//                            },
+                        onItemClick = {
+                            navController.navigate(Screen.AddEditDiaryScreen.route + "/${diary.diaryId}")
+                        },
                         onDeleteDiaryClick = {
                             viewModel.onEvent(DiariesEvent.OnDeleteDiaryClick(diary))
                             scope.launch {
@@ -99,9 +105,10 @@ fun DiaryScreen(
                             }
                         }
                     )
-                    Spacer(modifier = Modifier
-                        .height(16.dp)
-                        .background(MaterialTheme.colors.secondary)
+                    Spacer(
+                        modifier = Modifier
+                            .height(16.dp)
+                            .background(MaterialTheme.colors.secondary)
                     )
                 }
             }

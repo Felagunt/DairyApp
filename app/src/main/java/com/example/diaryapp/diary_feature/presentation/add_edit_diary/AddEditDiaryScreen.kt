@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -27,8 +28,7 @@ fun AddEditDiaryScreen(
     diaryViewModel: AddEditDiaryViewModel = hiltViewModel()
 ) {
 
-    val tittleState = diaryViewModel.diaryTitle.text
-    val contentState = diaryViewModel.diaryContent.text
+    val state = diaryViewModel.state
 
     val scaffoldState = rememberScaffoldState()
 
@@ -90,32 +90,36 @@ fun AddEditDiaryScreen(
                 )
             }*/
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = tittleState, onValueChange = {
-                    diaryViewModel.onEvent(
-                        AddEditDiaryEvent.OnChangeTitle(it)
-                    )
-                },
-                placeholder = {
-                    Text(text = "Enter title")
-                },
-                singleLine = true,
-                textStyle = MaterialTheme.typography.h5
-            )
+            state.diary?.title?.let { title ->
+                TextField(
+                    value = title, onValueChange = {
+                        diaryViewModel.onEvent(
+                            AddEditDiaryEvent.OnChangeTitle(it)
+                        )
+                    },
+                    placeholder = {
+                        Text(text = "Enter title")
+                    },
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.h5
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = contentState,
-                onValueChange = {
-                    diaryViewModel.onEvent(
-                        AddEditDiaryEvent.OnChangeTitle(it)
-                    )
-                },
-                placeholder = {
-                    Text(text = "Type some today's diary")
-                },
-                textStyle = MaterialTheme.typography.body1,
-                modifier = Modifier.fillMaxHeight()
-            )
+            state.diary?.content?.let { it1 ->
+                TextField(
+                    value = it1,
+                    onValueChange = {
+                        diaryViewModel.onEvent(
+                            AddEditDiaryEvent.OnChangeTitle(it)
+                        )
+                    },
+                    placeholder = {
+                        Text(text = "Type some today's diary")
+                    },
+                    textStyle = MaterialTheme.typography.body1,
+                    modifier = Modifier.fillMaxHeight()
+                )
+            }
         }
     }
 }

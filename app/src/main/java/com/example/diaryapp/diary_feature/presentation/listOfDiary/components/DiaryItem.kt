@@ -2,6 +2,7 @@ package com.example.diaryapp.diary_feature.presentation.listOfDiary.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -24,11 +25,13 @@ import com.example.diaryapp.diary_feature.domain.model.Diary
 fun DiaryItem(
     diary: Diary,
     modifier: Modifier = Modifier,
+    onItemClick: (Diary) -> Unit,
     onDeleteDiaryClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
+            .clickable { onItemClick(diary) }
             .border(4.dp, Color.DarkGray)
             .shadow(
                 shape = RoundedCornerShape(15.dp),

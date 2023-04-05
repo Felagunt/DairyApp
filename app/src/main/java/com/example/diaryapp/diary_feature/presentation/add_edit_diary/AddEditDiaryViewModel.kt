@@ -24,11 +24,9 @@ class AddEditDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var diaryTitle by mutableStateOf(AddEditTextFieldState())
+    var state by mutableStateOf(AddEditState())
         private set
 
-    var diaryContent by mutableStateOf(AddEditTextFieldState())
-        private set
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -41,11 +39,8 @@ class AddEditDiaryViewModel @Inject constructor(
                 viewModelScope.launch {
                     diaryRepository.getDiaryById(diaryId)?.also {diary ->
                         currentDiaryId = diary.diaryId
-                        diaryContent = diaryContent.copy(
-                            text = diary.content
-                        )
-                        diaryTitle = diaryTitle.copy(
-                            text = diary.title
+                        state = state.copy(
+                            diary = diary
                         )
                     }
                 }
@@ -61,13 +56,13 @@ class AddEditDiaryViewModel @Inject constructor(
                 //TODO refactor
             }
             is AddEditDiaryEvent.OnChangeContent -> {
-                diaryContent = diaryContent.copy(
-                    text = event.value
+                state.diary = state.diary?.copy(
+                    content = event.value
                 )
             }
             is AddEditDiaryEvent.OnChangeTitle -> {
-                diaryTitle = diaryTitle.copy(
-                    text = event.value
+                state.diary = state.diary?.copy(
+                    title = event.value
                 )
             }
             is AddEditDiaryEvent.SaveDiary -> {
@@ -79,8 +74,8 @@ class AddEditDiaryViewModel @Inject constructor(
                     try {
                         diaryRepository.insertDiary(
                             Diary(
-                                title = diaryTitle.text,
-                                content = diaryContent.text,
+                                title = state.diary!!.title,
+                                content = state.diary!!.content,
                                 timestamp = currentTime,
                                 diaryId = currentDiaryId
                             )
