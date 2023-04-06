@@ -27,7 +27,7 @@ fun Navigation() {
         composable(
             route = Screen.AddEditDiaryScreen.route + "/{diaryId}"
         ) {
-            AddEditDiaryScreen()
+            AddEditDiaryScreen(navController)
         }
     }
 }

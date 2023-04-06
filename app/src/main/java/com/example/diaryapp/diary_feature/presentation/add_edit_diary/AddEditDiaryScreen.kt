@@ -19,12 +19,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.diaryapp.diary_feature.presentation.Screen
+import com.example.diaryapp.util.Navigation
 import kotlinx.coroutines.flow.collectLatest
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddEditDiaryScreen(
+    navController: NavController,
     diaryViewModel: AddEditDiaryViewModel = hiltViewModel()
 ) {
 
@@ -44,6 +48,7 @@ fun AddEditDiaryScreen(
                 }
                 is UiEvent.SaveDiary -> {
                     //TODO navigation
+                    navController.navigate(Screen.DiaryScreen.route)
                 }
             }
         }
