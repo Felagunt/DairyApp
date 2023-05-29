@@ -4,31 +4,21 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.example.diaryapp.diary_feature.presentation.Screen
-import com.example.diaryapp.util.Navigation
 import kotlinx.coroutines.flow.collectLatest
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddEditDiaryScreen(
-    navController: NavController,
+    onPopBackStack: () -> Unit,
     diaryViewModel: AddEditDiaryViewModel = hiltViewModel()
 ) {
 
@@ -36,7 +26,6 @@ fun AddEditDiaryScreen(
 
     val scaffoldState = rememberScaffoldState()
 
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
         diaryViewModel.eventFlow.collectLatest { event ->
@@ -46,10 +35,11 @@ fun AddEditDiaryScreen(
                         message = event.message
                     )
                 }
-                is UiEvent.SaveDiary -> {
+                is UiEvent.PopBackStack -> {
                     //TODO navigation
-                    navController.navigate(Screen.DiaryScreen.route)
+                    onPopBackStack()
                 }
+                else -> Unit
             }
         }
     }
@@ -74,7 +64,7 @@ fun AddEditDiaryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colors.onSurface)
-                .padding(16.dp)
+                .padding(paddingValues = it)
         ) {
             /*Row(
                 modifier = Modifier
@@ -95,11 +85,11 @@ fun AddEditDiaryScreen(
                 )
             }*/
             Spacer(modifier = Modifier.height(16.dp))
-            state.diary?.title?.let { title ->
                 TextField(
-                    value = title, onValueChange = {
+                    value = state.diary?.title ?: "",
+                    onValueChange = {
                         diaryViewModel.onEvent(
-                            AddEditDiaryEvent.OnChangeTitle(it)
+                            AddEditDiaryEvent.OnChangeTitle(state.diary?.title ?: "")
                         )
                     },
                     placeholder = {
@@ -108,14 +98,12 @@ fun AddEditDiaryScreen(
                     singleLine = true,
                     textStyle = MaterialTheme.typography.h5
                 )
-            }
             Spacer(modifier = Modifier.height(16.dp))
-            state.diary?.content?.let { it1 ->
                 TextField(
-                    value = it1,
+                    value = state.diary?.content ?: "",
                     onValueChange = {
                         diaryViewModel.onEvent(
-                            AddEditDiaryEvent.OnChangeTitle(it)
+                            AddEditDiaryEvent.OnChangeContent(state.diary!!.content)
                         )
                     },
                     placeholder = {
@@ -124,7 +112,6 @@ fun AddEditDiaryScreen(
                     textStyle = MaterialTheme.typography.body1,
                     modifier = Modifier.fillMaxHeight()
                 )
-            }
         }
     }
 }

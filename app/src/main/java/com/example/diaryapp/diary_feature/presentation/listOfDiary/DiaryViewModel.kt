@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.diaryapp.diary_feature.domain.model.Diary
 import com.example.diaryapp.diary_feature.domain.repository.DiaryRepository
+import com.example.diaryapp.diary_feature.presentation.Screen
+import com.example.diaryapp.diary_feature.presentation.add_edit_diary.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -14,15 +16,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DiaryViewModel(
+class DiaryViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository
 ) : ViewModel() {
 
     var state by mutableStateOf(DiaryState(emptyList()))
         private set
 
-    private val diaryEventChannel = Channel<DiariesEvent>()
-    val diariesEvent = diaryEventChannel.receiveAsFlow()
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     private var recentlyDeletedDiary: Diary? = null
 
@@ -34,10 +36,19 @@ class DiaryViewModel(
         when(event) {
             is DiariesEvent.OnDiaryClick -> {
                 //navigate
+                sendUiEvent(
+                    UiEvent.Navigate(
+                    Screen.AddEditDiaryScreen.route + "?diaryId=${event.diary.diaryId}"
+                )
+                )
             }
             is DiariesEvent.OnDeleteDiaryClick -> {
                 viewModelScope.launch {
                     diaryRepository.deleteDiary(event.diary)
+                    sendUiEvent(UiEvent.ShowSnackbar(
+                        message = "Alarm deleted",
+                        action = "Undo"
+                    ))
                     recentlyDeletedDiary = event.diary
                 }
 
@@ -49,8 +60,14 @@ class DiaryViewModel(
                 }
             }
             is DiariesEvent.OnAddDiaryClick -> {
-                //navigate
+                sendUiEvent(UiEvent.Navigate(Screen.AddEditDiaryScreen.route))
             }
+        }
+    }
+
+    private fun sendUiEvent(event: UiEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
         }
     }
 

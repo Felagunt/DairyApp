@@ -7,4 +7,5 @@ sealed class DiariesEvent {
     object OnRestoreDiariesClick: DiariesEvent()
     object OnAddDiaryClick: DiariesEvent()
     data class OnDiaryClick(val diary: Diary): DiariesEvent()
+
 }

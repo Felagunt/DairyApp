@@ -7,7 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import com.example.diaryapp.ui.theme.DiaryAppTheme
 import com.example.diaryapp.util.Navigation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {

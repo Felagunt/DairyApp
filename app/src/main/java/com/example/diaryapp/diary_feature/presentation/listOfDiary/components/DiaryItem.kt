@@ -20,18 +20,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.diaryapp.diary_feature.domain.model.Diary
+import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiariesEvent
 
 @Composable
 fun DiaryItem(
     diary: Diary,
-    modifier: Modifier = Modifier,
-    onItemClick: (Diary) -> Unit,
-    onDeleteDiaryClick: () -> Unit
+    onEvent: (DiariesEvent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .clickable { onItemClick(diary) }
+            //.clickable { onItemClick(diary) }
             .border(4.dp, Color.DarkGray)
             .shadow(
                 shape = RoundedCornerShape(15.dp),
@@ -61,7 +61,9 @@ fun DiaryItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
-        IconButton(onClick = onDeleteDiaryClick,
+        IconButton(onClick = {
+                             onEvent(DiariesEvent.OnDeleteDiaryClick(diary))
+        },
         modifier = Modifier.align(Alignment.BottomEnd)
         ) {
             Icon(
