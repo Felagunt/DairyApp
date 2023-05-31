@@ -1,4 +1,4 @@
-package com.example.diaryapp.diary_feature.presentation.add_edit_diary
+package com.example.diaryapp.diary_feature.presentation
 
 sealed class UiEvent {
     object PopBackStack: UiEvent()

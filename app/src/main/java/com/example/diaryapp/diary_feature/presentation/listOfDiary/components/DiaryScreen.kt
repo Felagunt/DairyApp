@@ -1,6 +1,5 @@
 package com.example.diaryapp.diary_feature.presentation.listOfDiary.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,7 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,14 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.example.diaryapp.diary_feature.presentation.Screen
-import com.example.diaryapp.diary_feature.presentation.add_edit_diary.UiEvent
+import com.example.diaryapp.diary_feature.presentation.UiEvent
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiariesEvent
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @Composable
 fun DiaryScreen(
