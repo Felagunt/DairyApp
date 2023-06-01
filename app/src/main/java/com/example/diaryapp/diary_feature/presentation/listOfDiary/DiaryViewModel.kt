@@ -9,15 +9,16 @@ import com.example.diaryapp.diary_feature.domain.model.Diary
 import com.example.diaryapp.diary_feature.domain.repository.DiaryRepository
 import com.example.diaryapp.diary_feature.presentation.Screen
 import com.example.diaryapp.diary_feature.presentation.UiEvent
-import com.example.diaryapp.quote_feature.domain.model.Quote
 import com.example.diaryapp.quote_feature.domain.use_case.GetQuoteUseCase
 import com.example.diaryapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.Period
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -39,7 +40,7 @@ class DiaryViewModel @Inject constructor(
     init {
         getDiaries()
 
-        shownQuote()
+        showQuotePerDay()
     }
 
     fun onEvent(event: DiariesEvent) {
@@ -82,12 +83,17 @@ class DiaryViewModel @Inject constructor(
         }
     }
 
-    private fun shownQuote() {
+    private fun showQuotePerDay() {
         viewModelScope.launch {
             val lastItem = state.value.diaries.lastOrNull()
-            val lastTime = LocalDateTime.parse(lastItem?.timestamp)
-            if(LocalDateTime.now().dayOfYear != lastTime.dayOfYear) {
+            val lastTime = LocalDate.parse(lastItem?.timestamp)
+            val today = LocalDate.now()
+            val daysBtw = Period.between(today, lastTime).days
+
+            if(daysBtw >= 1) {
                 getQuote()
+            } else {
+                return@launch
             }
         }
     }
@@ -112,9 +118,7 @@ class DiaryViewModel @Inject constructor(
                     )
                 }
             }
-        }
-
-
+        }.launchIn(viewModelScope)
     }
 
     private fun getDiaries() {
