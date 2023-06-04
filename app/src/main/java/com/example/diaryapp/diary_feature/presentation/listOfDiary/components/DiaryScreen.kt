@@ -1,5 +1,7 @@
 package com.example.diaryapp.diary_feature.presentation.listOfDiary.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +22,7 @@ import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiariesEvent
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryViewModel
 import kotlinx.coroutines.flow.collectLatest
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DiaryScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
@@ -28,17 +31,16 @@ fun DiaryScreen(
 
     val state = viewModel.state
     val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collectLatest{ event ->
-            when(event) {
+        viewModel.uiEvent.collectLatest { event ->
+            when (event) {
                 is UiEvent.ShowSnackbar -> {
                     val result = scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message,
                         actionLabel = event.action
                     )
-                    if(result == SnackbarResult.ActionPerformed) {
+                    if (result == SnackbarResult.ActionPerformed) {
                         viewModel.onEvent(DiariesEvent.OnRestoreDiariesClick)
                     }
                 }
@@ -97,7 +99,7 @@ fun DiaryScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                items(state.diaries) { diary ->
+                items(state.value.diaries) { diary ->
                     DiaryItem(
                         diary = diary,
                         onEvent = viewModel::onEvent,
@@ -106,24 +108,6 @@ fun DiaryScreen(
                             .clickable {
                                 viewModel.onEvent(DiariesEvent.OnDiaryClick(diary))
                             }
-//                        onItemClick = {
-//                            navController.navigate(
-//                                Screen.AddEditDiaryScreen.route + "/${diary.diaryId}")
-
-//                        },
-//                        onDeleteDiaryClick = {
-//                            viewModel.onEvent(DiariesEvent.OnDeleteDiaryClick(diary))
-//                            scope.launch {
-//                                val result = scaffoldState.snackbarHostState.showSnackbar(
-//                                    message = "Note deleted",
-//                                    actionLabel = "Undo"
-//                                )
-//                                if (result == SnackbarResult.ActionPerformed) {
-//                                    viewModel.onEvent(DiariesEvent.OnRestoreDiariesClick)
-//                                }
-//                            }
-//                        }
-
                     )
                     Spacer(
                         modifier = Modifier
@@ -133,5 +117,14 @@ fun DiaryScreen(
                 }
             }
         }
+    }
+    if (viewModel.isQuoteDialogShown && state.value.quote != null) {
+
+        ShowQuoteDialog(
+            quote = state.value.quote!!,
+            onDismiss = {
+                viewModel.onEvent(DiariesEvent.OnDismissShownDialog)
+            }
+        )
     }
 }

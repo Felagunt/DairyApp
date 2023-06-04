@@ -37,14 +37,20 @@ class DiaryViewModel @Inject constructor(
 
     private var recentlyDeletedDiary: Diary? = null
 
+    var isQuoteDialogShown by mutableStateOf(false)
+    private set
+
     init {
         getDiaries()
-
         showQuotePerDay()
+        //isQuoteDialogShown = true
     }
 
     fun onEvent(event: DiariesEvent) {
         when(event) {
+            is DiariesEvent.OnDismissShownDialog -> {
+                isQuoteDialogShown = false
+            }
             is DiariesEvent.OnDiaryClick -> {
                 //navigate
                 sendUiEvent(
@@ -91,6 +97,7 @@ class DiaryViewModel @Inject constructor(
             val daysBtw = Period.between(today, lastTime).days
 
             if(daysBtw >= 1) {
+                isQuoteDialogShown = true
                 getQuote()
             } else {
                 return@launch
