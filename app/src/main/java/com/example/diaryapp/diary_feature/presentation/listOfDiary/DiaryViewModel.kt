@@ -31,6 +31,9 @@ class DiaryViewModel @Inject constructor(
     private val _state =  mutableStateOf(DiaryState())
         val state: State<DiaryState> = _state
 
+    private val _quoteState =  mutableStateOf(DiaryQuoteState())
+    val quoteState: State<DiaryQuoteState> = _quoteState
+
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -109,18 +112,18 @@ class DiaryViewModel @Inject constructor(
         getQuoteUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    _state.value = _state.value.copy(
+                    _quoteState.value = _quoteState.value.copy(
                         quote = result.data,
                         isLoading = false
                     )
                 }
                 is Resource.Error -> {
-                    _state.value = _state.value.copy(
+                    _quoteState.value = _quoteState.value.copy(
                         error = result.message ?: "An known error"
                     )
                 }
                 is Resource.Loading -> {
-                    _state.value = _state.value.copy(
+                    _quoteState.value = _quoteState.value.copy(
                         isLoading = true
                     )
                 }

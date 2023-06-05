@@ -10,9 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,6 +28,11 @@ fun DiaryScreen(
 ) {
 
     val state = viewModel.state
+
+    val quoteState by remember {
+        mutableStateOf(viewModel.quoteState)
+    }
+
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
@@ -121,10 +124,8 @@ fun DiaryScreen(
     if (viewModel.isQuoteDialogShown && state.value.quote != null) {
 
         ShowQuoteDialog(
-            quote = state.value.quote!!,
-            onDismiss = {
-                viewModel.onEvent(DiariesEvent.OnDismissShownDialog)
-            }
+            quoteState = quoteState.value,
+            onEvent = viewModel::onEvent
         )
     }
 }
