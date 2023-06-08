@@ -11,8 +11,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.diaryapp.diary_feature.domain.model.Diary
 import com.example.diaryapp.diary_feature.domain.repository.DiaryRepository
 import com.example.diaryapp.diary_feature.presentation.UiEvent
+import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -25,12 +28,15 @@ class AddEditDiaryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var state by mutableStateOf(AddEditState())
-        private set
+//    var state by mutableStateOf(AddEditState())
+//        private set
+
+    private var _state =  MutableStateFlow(AddEditState())
+    val state = _state.asStateFlow()
 
 
     private val _eventFlow = Channel<UiEvent>()
-    val eventFlow = _eventFlow.receiveAsFlow()
+    val uiEvent = _eventFlow.receiveAsFlow()
 
     private var currentDiaryId: Int? = null
 
@@ -40,7 +46,10 @@ class AddEditDiaryViewModel @Inject constructor(
                 viewModelScope.launch {
                     diaryRepository.getDiaryById(diaryId)?.also { diary ->
                         currentDiaryId = diary.diaryId
-                        state = state.copy(
+//                        _state = _state.copy(
+//                            diary = diary
+//                        )
+                        _state.value = _state.value.copy(
                             diary = diary
                         )
                     }
@@ -57,13 +66,13 @@ class AddEditDiaryViewModel @Inject constructor(
                 //TODO refactor
             }
             is AddEditDiaryEvent.OnChangeContent -> {
-                state.diary = state.diary?.copy(
+                state.value.diary = state.value.diary?.copy(
                     content = event.value
                 )
             }
             is AddEditDiaryEvent.OnChangeTitle -> {
 
-                    state.diary = state.diary?.copy(
+                    state.value.diary = state.value.diary?.copy(
                         title = event.value
                     )
             }
@@ -73,15 +82,15 @@ class AddEditDiaryViewModel @Inject constructor(
                         DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
                     )
                 viewModelScope.launch {
-                    if(state.diary!!.content.isBlank()) {
+                    if(state.value.diary!!.content.isBlank()) {
                         sendEvent(UiEvent.ShowSnackbar("Type some content"))
                         return@launch
                     } else {
                         try {
                             diaryRepository.insertDiary(
                                 Diary(
-                                    title = state.diary?.title ?: "",
-                                    content = state.diary!!.content,
+                                    title = state.value.diary?.title ?: "",
+                                    content = state.value.diary!!.content,
                                     timestamp = currentTime,
                                     diaryId = currentDiaryId
                                 )

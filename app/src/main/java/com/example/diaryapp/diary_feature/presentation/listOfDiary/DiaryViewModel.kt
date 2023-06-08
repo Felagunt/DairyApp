@@ -13,9 +13,7 @@ import com.example.diaryapp.quote_feature.domain.use_case.GetQuoteUseCase
 import com.example.diaryapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Period
@@ -28,8 +26,8 @@ class DiaryViewModel @Inject constructor(
     private val getQuoteUseCase: GetQuoteUseCase
 ) : ViewModel() {
 
-    private val _state =  mutableStateOf(DiaryState())
-        val state: State<DiaryState> = _state
+    private val _state =  MutableStateFlow(DiaryState())
+        val state = _state.asStateFlow()
 
     private val _quoteState =  mutableStateOf(DiaryQuoteState())
     val quoteState: State<DiaryQuoteState> = _quoteState

@@ -11,24 +11,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diaryapp.diary_feature.presentation.UiEvent
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddEditDiaryScreen(
     onPopBackStack: () -> Unit,
-    diaryViewModel: AddEditDiaryViewModel = hiltViewModel()
+    state: AddEditState,
+    uiEvent: Flow<UiEvent>,
+    onEvent: (AddEditDiaryEvent) -> Unit
 ) {
 
-    val state = diaryViewModel.state
+    //val state = diaryViewModel.state
 
     val scaffoldState = rememberScaffoldState()
 
 
     LaunchedEffect(key1 = true) {
-        diaryViewModel.eventFlow.collectLatest { event ->
+        uiEvent.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -48,7 +50,7 @@ fun AddEditDiaryScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    diaryViewModel.onEvent(AddEditDiaryEvent.SaveDiary)
+                    onEvent(AddEditDiaryEvent.SaveDiary)
                 },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
@@ -88,7 +90,7 @@ fun AddEditDiaryScreen(
                 TextField(
                     value = state.diary?.title ?: "",
                     onValueChange = {
-                        diaryViewModel.onEvent(
+                        onEvent(
                             AddEditDiaryEvent.OnChangeTitle(state.diary?.title ?: "")
                         )
                     },
@@ -102,7 +104,7 @@ fun AddEditDiaryScreen(
                 TextField(
                     value = state.diary?.content ?: "",
                     onValueChange = {
-                        diaryViewModel.onEvent(
+                        onEvent(
                             AddEditDiaryEvent.OnChangeContent(state.diary!!.content)
                         )
                     },

@@ -14,29 +14,33 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.diaryapp.diary_feature.presentation.UiEvent
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiariesEvent
-import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryViewModel
+import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryQuoteState
+import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DiaryScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
-    viewModel: DiaryViewModel = hiltViewModel()
+    state: DiaryState,
+    quoteState: DiaryQuoteState,
+    onEvent: (DiariesEvent) -> Unit,
+    uiEvent: Flow<UiEvent>//TODO Is  that good?
 ) {
 
-    val state = viewModel.state
 
-    val quoteState by remember {
-        mutableStateOf(viewModel.quoteState)
-    }
+//
+//    val quoteState by remember {
+//        mutableStateOf(viewModel.quoteState)
+//    }//TODO
 
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collectLatest { event ->
+        uiEvent.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowSnackbar -> {
                     val result = scaffoldState.snackbarHostState.showSnackbar(
@@ -44,7 +48,7 @@ fun DiaryScreen(
                         actionLabel = event.action
                     )
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onEvent(DiariesEvent.OnRestoreDiariesClick)
+                        onEvent(DiariesEvent.OnRestoreDiariesClick)
                     }
                 }
                 is UiEvent.Navigate -> {
@@ -59,7 +63,7 @@ fun DiaryScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    viewModel.onEvent(DiariesEvent.OnAddDiaryClick)
+                    onEvent(DiariesEvent.OnAddDiaryClick)
                 },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
@@ -102,14 +106,14 @@ fun DiaryScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                items(state.value.diaries) { diary ->
+                items(state.diaries) { diary ->
                     DiaryItem(
                         diary = diary,
-                        onEvent = viewModel::onEvent,
+                        onEvent = onEvent,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                viewModel.onEvent(DiariesEvent.OnDiaryClick(diary))
+                                onEvent(DiariesEvent.OnDiaryClick(diary))
                             }
                     )
                     Spacer(
@@ -121,11 +125,11 @@ fun DiaryScreen(
             }
         }
     }
-    if (viewModel.isQuoteDialogShown && state.value.quote != null) {
+    //if (quoteState.quote ) {
 
         ShowQuoteDialog(
-            quoteState = quoteState.value,
-            onEvent = viewModel::onEvent
+            quoteState = quoteState,
+            onEvent = onEvent
         )
-    }
+    //}
 }
