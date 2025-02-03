@@ -6,7 +6,8 @@ import com.example.diaryapp.diary_feature.data.Entity.DiaryEntity
 
 @Database(
     entities = [DiaryEntity::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 abstract class DiaryDatabase: RoomDatabase() {
 

@@ -6,7 +6,7 @@ sealed class DiariesEvent {
     data class OnDeleteDiaryClick(val diary: Diary): DiariesEvent()
     object OnRestoreDiariesClick: DiariesEvent()
     object OnAddDiaryClick: DiariesEvent()
-    data class OnDiaryClick(val diary: Diary): DiariesEvent()
+    data class  OnDiaryClick(val diary: Diary): DiariesEvent()
     object OnDismissShownDialog: DiariesEvent()
 
 }

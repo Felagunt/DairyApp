@@ -4,20 +4,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiariesEvent
 import com.example.diaryapp.diary_feature.presentation.listOfDiary.DiaryQuoteState
+import com.example.diaryapp.quote_feature.domain.model.Quote
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -32,7 +35,7 @@ fun ShowQuoteDialog(
         },
         properties = DialogProperties(
 
-            usePlatformDefaultWidth = false
+            usePlatformDefaultWidth = true
         )
     ) {
         Box(
@@ -41,13 +44,13 @@ fun ShowQuoteDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .clip(shape = RoundedCornerShape(15.dp))
-                .background(MaterialTheme.colors.onSurface)
-                .border(
-                    1.dp,
-                    color = MaterialTheme.colors.onSecondary,
-                    shape = RoundedCornerShape(15.dp)
-                )
+                .clip(shape = MaterialTheme.shapes.medium)
+//                .background(MaterialTheme.colorScheme.surfaceContainer)
+//                .border(
+//                    1.dp,
+//                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+//                    shape = RoundedCornerShape(15.dp)
+//                )
         ) {
             Column(
                 modifier = Modifier
@@ -57,21 +60,21 @@ fun ShowQuoteDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = quoteState.quote!!.quote,
+                    text = quoteState.quote?.quote ?: "",
                     textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.h5
+                    style = MaterialTheme.typography.headlineMedium
                 )
                 Text(
-                    text = quoteState.quote.author ,
+                    text = quoteState.quote?.author ?: "",
                     textAlign = TextAlign.End,
-                    style = MaterialTheme.typography.subtitle2
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
-            if(quoteState.error.isNotBlank()) {
+            if(quoteState.error.isNotBlank( )) {
                 Text(
                     text = quoteState.error,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.Center)
@@ -84,4 +87,17 @@ fun ShowQuoteDialog(
         }
 
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun previewShowDialog() {
+    ShowQuoteDialog(quoteState = DiaryQuoteState(
+        isLoading = false,
+        error = "errro",
+        quote = Quote(
+            author = "wialiam",
+            quote = "no one eternal"
+        )
+    ), onEvent = {})
 }

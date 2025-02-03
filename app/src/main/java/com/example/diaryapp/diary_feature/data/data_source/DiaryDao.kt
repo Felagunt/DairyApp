@@ -6,17 +6,16 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.diaryapp.diary_feature.data.Entity.DiaryEntity
-import com.example.diaryapp.diary_feature.domain.model.Diary
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DiaryDao {
 
     @Query("SELECT * FROM diaryentity")
-    fun getDiarys(): List<DiaryEntity>
+    fun getDiaries(): Flow<List<DiaryEntity>>
 
     @Query("SELECT * FROM diaryentity WHERE id = :id")
-    suspend fun getDiaryById(id: String): DiaryEntity?
+    suspend fun getDiaryById(id: Int): DiaryEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDiary(diary: DiaryEntity)

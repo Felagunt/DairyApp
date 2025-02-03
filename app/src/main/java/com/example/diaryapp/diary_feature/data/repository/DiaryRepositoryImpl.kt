@@ -1,6 +1,5 @@
 package com.example.diaryapp.diary_feature.data.repository
 
-import com.example.diaryapp.diary_feature.data.Entity.DiaryEntity
 import com.example.diaryapp.diary_feature.data.Entity.toDiary
 import com.example.diaryapp.diary_feature.data.data_source.DiaryDao
 import com.example.diaryapp.diary_feature.domain.model.Diary
@@ -13,11 +12,16 @@ import javax.inject.Inject
 class DiaryRepositoryImpl @Inject constructor(
     private val diaryDao: DiaryDao
 ): DiaryRepository {
-    override fun getDiaries(): List<Diary> {
-        return diaryDao.getDiarys().map { it.toDiary() }
+    override fun getDiaries(): Flow<List<Diary>> {
+        return diaryDao.getDiaries()
+            .map {diaries ->
+                diaries.map {
+                    it.toDiary()
+                }
+            }
     }
 
-    override suspend fun getDiaryById(id: String): Diary? {
+    override suspend fun getDiaryById(id: Int): Diary? {
         return diaryDao.getDiaryById(id)?.toDiary()
     }
 

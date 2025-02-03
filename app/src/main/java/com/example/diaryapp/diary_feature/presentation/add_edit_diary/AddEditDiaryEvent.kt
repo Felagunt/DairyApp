@@ -6,6 +6,7 @@ sealed class AddEditDiaryEvent{
 
     data class OnChangeTitle(val value: String): AddEditDiaryEvent()
     data class OnChangeContent(val value: String): AddEditDiaryEvent()
-    data class OnLeavePage(val diary: Diary): AddEditDiaryEvent()
+    object OnLeavePage: AddEditDiaryEvent()
+    object OnDeleteDiaryClick: AddEditDiaryEvent()
     object SaveDiary: AddEditDiaryEvent()
 }
